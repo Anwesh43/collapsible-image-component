@@ -26,13 +26,16 @@ class CollapsibleImageComponent extends HTMLElement {
     drawImg() {
         const canvas = document.createElement('canvas')
         canvas.width = window.innerWidth/5
-        canvas.height = window.innerWidth/5
+        canvas.height = (window.innerWidth/5) * (this.image.height)/(this.image.width)
+        const w = canvas.width ,h = canvas.height
         const context = canvas.getContext('2d')
         context.save()
         context.beginPath()
-        context.rect(0,0,canvas.width,canvas.height*this.scale)
+        context.rect(0,0,canvas.width,canvas.height*this.state.scale)
         context.clip()
-        context.drawImage(this.image,0,0,canvas.width,canvas.height)
+        context.fillStyle = '#BDBDBD'
+        context.fillRect(0,0,w,h)
+        context.drawImage(this.image,w/40,h/40,19*w/20,19*h/20)
         context.restore()
         this.img.src = canvas.toDataURL()
     }
@@ -49,17 +52,15 @@ class CollapsibleImageComponent extends HTMLElement {
         this.img.style.position = 'absolute'
         this.img.style.left =  window.innerWidth/2 - window.innerWidth/10
         this.img.style.top = window.innerHeight/10 + window.innerWidth/20 + window.innerHeight/20
-        console.log(this.__proto__)
         this.src = this.getAttribute('src')
-        console.log(typeof(this.src))
         shadow.appendChild(this.img)
         shadow.appendChild(this.btn)
-        console.log(`the dir is ${this.state}`)
+        //console.log(`the dir is ${this.state}`)
     }
     render() {
         if(this.state.scale<=0) {
             this.state.dir = 1
-            console.log(`the dir is ${this.dir}`)
+            //console.log(`the dir is ${this.dir}`)
         }
         else {
             this.state.dir = -1
@@ -79,7 +80,7 @@ class CollapsibleImageComponent extends HTMLElement {
             if(this.state.dir == 0) {
                 clearInterval(interval)
             }
-        },100)
+        },50)
     }
     connectedCallback() {
       if(this.src) {
