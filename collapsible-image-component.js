@@ -29,8 +29,9 @@ class CollapsibleImageComponent extends HTMLElement {
         canvas.height = window.innerWidth/5
         const context = canvas.getContext('2d')
         context.save()
-        context.translate(canvas.width/2,0)
-        context.scale(1,this.state.scale)
+        context.beginPath()
+        context.rect(0,0,canvas.width,canvas.height*this.scale)
+        context.clip()
         context.drawImage(this.image,0,0,canvas.width,canvas.height)
         context.restore()
         this.img.src = canvas.toDataURL()
@@ -48,6 +49,9 @@ class CollapsibleImageComponent extends HTMLElement {
         this.img.style.position = 'absolute'
         this.img.style.left =  window.innerWidth/2 - window.innerWidth/10
         this.img.style.top = window.innerHeight/10 + window.innerWidth/20 + window.innerHeight/20
+        console.log(this.__proto__)
+        this.src = this.getAttribute('src')
+        console.log(typeof(this.src))
         shadow.appendChild(this.img)
         shadow.appendChild(this.btn)
         console.log(`the dir is ${this.state}`)
@@ -78,7 +82,13 @@ class CollapsibleImageComponent extends HTMLElement {
         },100)
     }
     connectedCallback() {
-      this.drawImg()
+      if(this.src) {
+          this.image.src = this.src
+          this.image.onload = () => {
+              console.log("img is loaded")
+              this.drawImg()
+          }
+      }
       this.drawBtn()
       this.btn.onmousedown = () => {
             console.log("clicked")
